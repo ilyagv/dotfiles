@@ -67,11 +67,17 @@ action = "ScrollPageDown"
 key = "J"
 mods = "Control|Shift"
 
+[[keyboard.bindings]]
+action = "CreateNewWindow"
+key = "T"
+mods = "Control|Shift"
+
 [scrolling]
 history = 10000
 
 [window]
 opacity = 1.0
+startup_mode = "Maximized"
 
 [window.padding]
 x = 0

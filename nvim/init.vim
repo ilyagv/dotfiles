@@ -160,11 +160,14 @@ au BufWinLeave * call clearmatches()
 "colorscheme duskfox
 "colorscheme nightfox
 "colorscheme nordfox
-colorscheme terafox
-let g:onedark_config = {
-    \ 'style': 'darker',
-\}
 
+" colorscheme terafox
+let g:onedark_config = {
+    \ 'style': 'deep',
+\}
+colorscheme onedark
+    "\ 'style': 'darker',
+    "\ 'style': 'deep',
 
 autocmd VimEnter * TSEnable highlight
 
