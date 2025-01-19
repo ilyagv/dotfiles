@@ -85,6 +85,7 @@ Plug 'junegunn/gv.vim'
 Plug 'Yggdroot/LeaderF', { 'do': ':LeaderfInstallCExtension' }
 Plug 'mileszs/ack.vim'
 Plug 'navarasu/onedark.nvim'
+Plug 'sindrets/diffview.nvim'
 call plug#end()
 
 lua require('toggleterm').setup({ size = 20, float_opts = {}, })
