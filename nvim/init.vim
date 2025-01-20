@@ -85,6 +85,7 @@ Plug 'junegunn/gv.vim'
 Plug 'Yggdroot/LeaderF', { 'do': ':LeaderfInstallCExtension' }
 Plug 'mileszs/ack.vim'
 Plug 'navarasu/onedark.nvim'
+Plug 'dense-analysis/ale'
 Plug 'sindrets/diffview.nvim'
 call plug#end()
 
