@@ -87,6 +87,7 @@ Plug 'mileszs/ack.vim'
 Plug 'navarasu/onedark.nvim'
 Plug 'dense-analysis/ale'
 Plug 'sindrets/diffview.nvim'
+Plug 'vifm/vifm.vim'
 call plug#end()
 
 lua require('toggleterm').setup({ size = 20, float_opts = {}, })
