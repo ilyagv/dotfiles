@@ -88,9 +88,18 @@ Plug 'navarasu/onedark.nvim'
 Plug 'dense-analysis/ale'
 Plug 'sindrets/diffview.nvim'
 Plug 'vifm/vifm.vim'
+"Plug 'f-person/git-blame.nvim'
+Plug 'rhysd/git-messenger.vim'
+Plug 'nvim-tree/nvim-web-devicons'
+Plug 'rhysd/git-messenger.vim'
 call plug#end()
 
+"lua require('gitblame').setup {
+"    \ enabled = false,
+"\}
 lua require('toggleterm').setup({ size = 20, float_opts = {}, })
+
+let g:python3_host_prog = expand('/usr/bin/python3')
 
 map <F3> :NERDTreeToggle<CR>
 " nnoremap <leader>n :NERDTreeFocus<CR>
