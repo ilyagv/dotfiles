@@ -29,7 +29,8 @@ set hlsearch
 set incsearch
 set showmatch
 set ignorecase
-" set scrolloff=3
+" number of screen lines to keep above and below the cursor (when scrolling)
+set scrolloff=8
 " set sidescrolloff=5
 " set showcmd
 " set wildmenu
