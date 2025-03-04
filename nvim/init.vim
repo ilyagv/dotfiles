@@ -93,12 +93,66 @@ Plug 'vifm/vifm.vim'
 Plug 'rhysd/git-messenger.vim'
 Plug 'nvim-tree/nvim-web-devicons'
 Plug 'rhysd/git-messenger.vim'
+Plug 'nvim-lua/plenary.nvim'
+Plug 'MunifTanjim/nui.nvim'
+Plug 'nvim-neo-tree/neo-tree.nvim'
+Plug 'lukas-reineke/indent-blankline.nvim'
+Plug 'numToStr/Comment.nvim'
 call plug#end()
+
+lua require('Comment').setup()
 
 "lua require('gitblame').setup {
 "    \ enabled = false,
 "\}
-lua require('toggleterm').setup({ size = 20, float_opts = {}, })
+
+lua << EOF
+require('toggleterm').setup({ 
+	 size = function(term)
+		 if term.direction == "vertical" then
+			return 100
+		 elseif term.direction == "horizontal" then
+			return 25
+		 end
+	 end,
+ float_opts = {}, 
+})
+EOF
+
+lua << EOF
+local highlight = {
+    "RainbowRed",
+    "RainbowYellow",
+    "RainbowBlue",
+    "RainbowOrange",
+    "RainbowGreen",
+    "RainbowViolet",
+    "RainbowCyan",
+}
+local hooks = require "ibl.hooks"
+-- create the highlight groups in the highlight setup hook, so they are reset
+-- every time the colorscheme changes
+hooks.register(hooks.type.HIGHLIGHT_SETUP, function()
+    vim.api.nvim_set_hl(0, "RainbowRed", { fg = "#E06C75" })
+    vim.api.nvim_set_hl(0, "RainbowYellow", { fg = "#E5C07B" })
+    vim.api.nvim_set_hl(0, "RainbowBlue", { fg = "#61AFEF" })
+    vim.api.nvim_set_hl(0, "RainbowOrange", { fg = "#D19A66" })
+    vim.api.nvim_set_hl(0, "RainbowGreen", { fg = "#98C379" })
+    vim.api.nvim_set_hl(0, "RainbowViolet", { fg = "#C678DD" })
+    vim.api.nvim_set_hl(0, "RainbowCyan", { fg = "#56B6C2" })
+end)
+
+vim.g.rainbow_delimiters = { highlight = highlight }
+require("ibl").setup { scope = { highlight = highlight } }
+
+hooks.register(hooks.type.SCOPE_HIGHLIGHT, hooks.builtin.scope_highlight_from_extmark)
+-- lua require("ibl").setup()
+EOF
+
+"lua require('toggleterm').setup({ 
+"	\ size = 20, 
+"	\ float_opt = {}, 
+"\})
 
 let g:python3_host_prog = expand('/usr/bin/python3')
 
@@ -121,9 +175,12 @@ autocmd TermEnter term://*toggleterm#*
 " For example: 2<C-t> will open terminal 2
 "nnoremap <silent><c-t> <Cmd>exe v:count1 . "ToggleTerm direction=float"<CR>
 "inoremap <silent><c-t> <Esc><Cmd>exe v:count1 . "ToggleTerm direction=float"<CR>
-nnoremap <silent><c-t> <Cmd>exe v:count1 . "ToggleTerm size=25"<CR>
-inoremap <silent><c-t> <Esc><Cmd>exe v:count1 . "ToggleTerm size=25"<CR>
+"
+"nnoremap <silent><c-t> <Cmd>exe v:count1 . "ToggleTerm size=25"<CR>
+"inoremap <silent><c-t> <Esc><Cmd>exe v:count1 . "ToggleTerm size=25"<CR>
 
+nnoremap <silent><c-t> <Cmd>exe v:count1 . "ToggleTerm"<CR>
+inoremap <silent><c-t> <Esc><Cmd>exe v:count1 . "ToggleTerm"<CR>
 
 "lua require('telescope').setup({ defaults = { layout_config = { vertical = { width = 0.5 } }, }, })
 lua require('telescope').setup({ defaults =
@@ -138,6 +195,8 @@ lua require('telescope').setup({ defaults =
 		\ }, 
 	\ },
 \ })
+
+"lua require('telescope').load_extension("live_grep_args")
 
 " Find files using Telescope command-line sugar.
 nnoremap <leader>ff <cmd>Telescope find_files<cr>
