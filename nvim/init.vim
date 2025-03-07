@@ -99,8 +99,18 @@ Plug 'nvim-neo-tree/neo-tree.nvim'
 Plug 'lukas-reineke/indent-blankline.nvim'
 Plug 'numToStr/Comment.nvim'
 call plug#end()
-
 lua require('Comment').setup()
+
+lua << EOF
+require('neo-tree').setup({
+	filesystem = {
+		follow_current_file = { 
+			enabled = true,
+			leave_dirs_open = true,
+		},
+	},
+})
+EOF
 
 "lua require('gitblame').setup {
 "    \ enabled = false,
@@ -156,7 +166,8 @@ EOF
 
 let g:python3_host_prog = expand('/usr/bin/python3')
 
-map <F3> :NERDTreeToggle<CR>
+map <F3> :Neotree toggle<CR>
+" map <F3> :NERDTreeToggle<CR>
 " nnoremap <leader>n :NERDTreeFocus<CR>
 " nnoremap <C-n> :NERDTree<CR>
 " nnoremap <C-t> :NERDTreeToggle<CR>
