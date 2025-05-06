@@ -30,7 +30,7 @@ set incsearch
 set showmatch
 set ignorecase
 " number of screen lines to keep above and below the cursor (when scrolling)
-set scrolloff=8
+set scrolloff=10
 " set sidescrolloff=5
 " set showcmd
 " set wildmenu
@@ -40,11 +40,20 @@ set scrolloff=8
 " set paste               " Paste from a windows or from vim (this option spoils telescope navigations)
 " set go+=a               " Visual selection automatically copied to the clipboard
 
+" PEP 8 identation
+au BufNewFile,BufRead *.py
+    \ set tabstop=4
+    \  softtabstop=4
+    \  shiftwidth=4
+    \  textwidth=79
+    \  expandtab
+    \  autoindent
+    \  fileformat=unix
 
 let NERDTreeIgnore = ['\.o$', '\.d$', '\.ko$', '\.mod\.c$', '\.mod$']
 let g:NERDTreeWinSize=40
 
-" Disable 'Ex mode' 
+" Disable 'Ex mode'
 " nnoremap Q <Nop>
 
 " remove auto commenting
@@ -98,26 +107,28 @@ Plug 'MunifTanjim/nui.nvim'
 Plug 'nvim-neo-tree/neo-tree.nvim'
 Plug 'lukas-reineke/indent-blankline.nvim'
 Plug 'numToStr/Comment.nvim'
+Plug 'mfussenegger/nvim-dap'
 call plug#end()
-lua require('Comment').setup()
-
-lua << EOF
-require('neo-tree').setup({
-	filesystem = {
-		follow_current_file = { 
-			enabled = true,
-			leave_dirs_open = true,
-		},
-	},
-})
-EOF
 
 "lua require('gitblame').setup {
 "    \ enabled = false,
 "\}
 
+
 lua << EOF
-require('toggleterm').setup({ 
+
+require('Comment').setup()
+
+require('neo-tree').setup({
+	filesystem = {
+		follow_current_file = {
+			enabled = true,
+			leave_dirs_open = true,
+		},
+	},
+})
+
+require('toggleterm').setup({
 	 size = function(term)
 		 if term.direction == "vertical" then
 			return 100
@@ -125,7 +136,7 @@ require('toggleterm').setup({
 			return 25
 		 end
 	 end,
- float_opts = {}, 
+ float_opts = {},
 })
 EOF
 
@@ -159,9 +170,9 @@ hooks.register(hooks.type.SCOPE_HIGHLIGHT, hooks.builtin.scope_highlight_from_ex
 -- lua require("ibl").setup()
 EOF
 
-"lua require('toggleterm').setup({ 
-"	\ size = 20, 
-"	\ float_opt = {}, 
+"lua require('toggleterm').setup({
+"	\ size = 20,
+"	\ float_opt = {},
 "\})
 
 let g:python3_host_prog = expand('/usr/bin/python3')
@@ -184,28 +195,35 @@ autocmd TermEnter term://*toggleterm#*
 " By applying the mappings this way you can pass a count to your
 " mapping to open a specific window.
 " For example: 2<C-t> will open terminal 2
-"nnoremap <silent><c-t> <Cmd>exe v:count1 . "ToggleTerm direction=float"<CR>
-"inoremap <silent><c-t> <Esc><Cmd>exe v:count1 . "ToggleTerm direction=float"<CR>
+nnoremap <silent><c-t> <Cmd>exe v:count1 . "ToggleTerm direction=float"<CR>
+inoremap <silent><c-t> <Esc><Cmd>exe v:count1 . "ToggleTerm direction=float"<CR>
 "
 "nnoremap <silent><c-t> <Cmd>exe v:count1 . "ToggleTerm size=25"<CR>
 "inoremap <silent><c-t> <Esc><Cmd>exe v:count1 . "ToggleTerm size=25"<CR>
 
-nnoremap <silent><c-t> <Cmd>exe v:count1 . "ToggleTerm"<CR>
-inoremap <silent><c-t> <Esc><Cmd>exe v:count1 . "ToggleTerm"<CR>
+" nnoremap <silent><c-t> <Cmd>exe v:count1 . "ToggleTerm"<CR>
+" inoremap <silent><c-t> <Esc><Cmd>exe v:count1 . "ToggleTerm"<CR>
 
 "lua require('telescope').setup({ defaults = { layout_config = { vertical = { width = 0.5 } }, }, })
-lua require('telescope').setup({ defaults =
-	\ { layout_config =
-		 \ { horizontal =
-			 \ { 
-				\ prompt_position = "top",
-				\ width = { padding = 0 },
-				\ height = { padding = 0 },
-				\ preview_width = 0.5,
-			\ },
-		\ }, 
-	\ },
-\ })
+
+lua << EOF
+require('telescope').setup({
+	defaults = {
+		layout_config = {
+			horizontal = {
+				prompt_position = "top",
+				width = {
+					padding = 0
+				},
+				height = {
+					padding = 0
+				},
+				preview_width = 0.5,
+			},
+		},
+	},
+})
+EOF
 
 "lua require('telescope').load_extension("live_grep_args")
 
@@ -226,13 +244,6 @@ nnoremap <leader>fs <cmd>Telescope grep_string<cr>
 " let g:solarized_disable_background = v:false
 " let g:solarized_extra_hi_groups = 1
 
-" Highlight trailing whitespaces
-highlight ExtraWhitespace ctermbg=red guibg=red
-match ExtraWhitespace /\s\+$/
-au BufWinEnter * match ExtraWhitespace /\s\+$/
-au InsertEnter * match ExtraWhitespace /\s\+\%#\@<!$/
-au InsertLeave * match ExtraWhitespace /\s\+$/
-au BufWinLeave * call clearmatches()
 
 
 " colorscheme solarized8
@@ -254,7 +265,6 @@ colorscheme onedark
 
 autocmd VimEnter * TSEnable highlight
 
-
 let g:nerdtree_sync_cursorline = 1
 let g:NERDTreeHighlightCursorline = 1
 
@@ -274,3 +284,16 @@ let g:NERDTreeHighlightCursorline = 1
 let g:fzf_preview_window=['up:80%', 'ctrl-/']
 let g:fzf_layout = { 'window': { 'width': 1.0, 'height': 1.0, 'relative': v:true } }
 
+
+lua << EOF
+--  Highlight trailing whitespaces
+vim.api.nvim_set_hl(0, "ExtraWhitespace", { ctermbg = "darkred", bg = "darkred" })
+
+-- Autocommand to highlight trailing whitespace in all buffers
+vim.api.nvim_create_autocmd("BufWinEnter", {
+    pattern = "*",
+    callback = function()
+        vim.fn.matchadd("ExtraWhitespace", [[\s\+$]])
+    end,
+})
+EOF
