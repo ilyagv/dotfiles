@@ -64,10 +64,11 @@ let g:NERDTreeWinSize=40
 autocmd CursorMoved * silent! exe printf("match Search /\\<%s\\>/", expand('<cword>'))
 
 call plug#begin()
-Plug 'https://github.com/vim-airline/vim-airline'
+" Plug 'https://github.com/vim-airline/vim-airline'
+Plug 'nvim-lualine/lualine.nvim' " Statusline
 Plug 'https://github.com/preservim/nerdtree'
-Plug 'https://github.com/ryanoasis/vim-devicons'
-Plug 'https://github.com/nvim-lua/plenary.nvim'
+" Plug 'https://github.com/ryanoasis/vim-devicons'
+" Plug 'https://github.com/nvim-lua/plenary.nvim'
 Plug 'https://github.com/nvim-telescope/telescope.nvim'
 Plug 'https://github.com/nvim-tree/nvim-tree.lua'
 " Plug 'https://github.com/maxmx03/solarized.nvim'
@@ -95,7 +96,7 @@ Plug 'junegunn/gv.vim'
 Plug 'Yggdroot/LeaderF', { 'do': ':LeaderfInstallCExtension' }
 Plug 'mileszs/ack.vim'
 Plug 'navarasu/onedark.nvim'
-Plug 'dense-analysis/ale'
+Plug 'dense-analysis/ale'	" Linter
 Plug 'sindrets/diffview.nvim'
 Plug 'vifm/vifm.vim'
 "Plug 'f-person/git-blame.nvim'
@@ -105,9 +106,11 @@ Plug 'rhysd/git-messenger.vim'
 Plug 'nvim-lua/plenary.nvim'
 Plug 'MunifTanjim/nui.nvim'
 Plug 'nvim-neo-tree/neo-tree.nvim'
-Plug 'lukas-reineke/indent-blankline.nvim'
+Plug 'lukas-reineke/indent-blankline.nvim' " Show identation guides
 Plug 'numToStr/Comment.nvim'
 Plug 'mfussenegger/nvim-dap'
+Plug 'iamcco/markdown-preview.nvim', { 'do': { -> mkdp#util#install() }, 'for': ['markdown', 'vim-plug']}
+Plug 'nvim-pack/nvim-spectre'
 call plug#end()
 
 "lua require('gitblame').setup {
@@ -116,6 +119,12 @@ call plug#end()
 
 
 lua << EOF
+
+require('lualine').setup({
+	options = {
+		theme = 'onedark',
+	},
+})
 
 require('Comment').setup()
 
@@ -233,6 +242,9 @@ nnoremap <leader>fg <cmd>Telescope live_grep<cr>
 nnoremap <leader>fb <cmd>Telescope buffers<cr>
 nnoremap <leader>fh <cmd>Telescope help_tags<cr>
 nnoremap <leader>fs <cmd>Telescope grep_string<cr>
+
+nnoremap <leader>mp <cmd>MarkdownPreview<cr>
+nnoremap <leader>ms <cmd>MarkdownPreviewStop<cr>
 
 " Example config in Vim-Script
 " let g:solarized_italic_comments = v:true
