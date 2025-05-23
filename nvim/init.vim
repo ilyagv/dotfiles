@@ -22,7 +22,6 @@ set noexpandtab
 "set lines=45
 "set columns=195
 set cursorline
-" set cursorcolumn
 " set autoread
 
 set hlsearch
@@ -50,8 +49,6 @@ au BufNewFile,BufRead *.py
     \  autoindent
     \  fileformat=unix
 
-let NERDTreeIgnore = ['\.o$', '\.d$', '\.ko$', '\.mod\.c$', '\.mod$']
-let g:NERDTreeWinSize=40
 
 " Disable 'Ex mode'
 " nnoremap Q <Nop>
@@ -61,56 +58,51 @@ let g:NERDTreeWinSize=40
 
 "set wildignore+=*.o,*.d,*.ko,*.mod.c
 
-autocmd CursorMoved * silent! exe printf("match Search /\\<%s\\>/", expand('<cword>'))
+" autocmd CursorMoved * silent! exe printf("match Search /\\<%s\\>/", expand('<cword>'))
+autocmd CursorMoved *.c,*.cpp,*.hpp,*.h,*.py,*.rs silent! exe printf("match Search /\\<%s\\>/", expand('<cword>'))
+" Save file on disk only when there are changes
+nnoremap <leader>w :update<cr>
+" Save file in insert mode
+inoremap <leader>w <Esc>:update<cr>gi
 
 call plug#begin()
-" Plug 'https://github.com/vim-airline/vim-airline'
 Plug 'nvim-lualine/lualine.nvim' " Statusline
-Plug 'https://github.com/preservim/nerdtree'
-" Plug 'https://github.com/ryanoasis/vim-devicons'
-" Plug 'https://github.com/nvim-lua/plenary.nvim'
-Plug 'https://github.com/nvim-telescope/telescope.nvim'
-Plug 'https://github.com/nvim-tree/nvim-tree.lua'
-" Plug 'https://github.com/maxmx03/solarized.nvim'
-Plug 'https://github.com/shaunsingh/solarized.nvim'
-" Plug 'https://github.com/ishan9299/nvim-solarized-lua'
-Plug 'https://github.com/lifepillar/vim-solarized8'
-"Plug 'https://github.com/Tsuzat/NeoSolarized.nvim'
-" Plug 'https://github.com/AlexvZyl/nordic.nvim'
-"Plug 'https://github.com/catppuccin/nvim'
-"Plug 'https://github.com/rebelot/kanagawa.nvim'
-Plug 'https://github.com/mhartington/oceanic-next'
-Plug 'https://github.com/EdenEast/nightfox.nvim'
-Plug 'https://github.com/rakr/vim-one'
-Plug 'https://github.com/pulkomandy/c.vim'
-Plug 'nvim-treesitter/nvim-treesitter'
-" Plug 'https://github.com/akinsho/toggleterm.nvim'
-Plug 'akinsho/toggleterm.nvim', {'tag' : '*'}
-Plug 'unkiwii/vim-nerdtree-sync'
-" Plug 'tpop/fugitive'
-Plug 'https://tpope.io/vim/fugitive.git'
+Plug 'akinsho/toggleterm.nvim', {'tag' : '*'} " Terminal
+Plug 'https://github.com/nvim-telescope/telescope.nvim' " Telescope fuzzing search
+Plug 'navarasu/onedark.nvim' " Colorscheme
+Plug 'catppuccin/nvim', { 'as': 'catppuccin' } " Colorscheme
+Plug 'nvim-neo-tree/neo-tree.nvim' "File explorer
+Plug 'https://github.com/nvim-tree/nvim-tree.lua' " Next file explorer (let's leave it for comparison)
+Plug 'vifm/vifm.vim' " Vifm file manager
+Plug 'dense-analysis/ale' " Linter
+Plug 'numToStr/Comment.nvim' " commenting plugin
+Plug 'lukas-reineke/indent-blankline.nvim' " Show identation guides
+" Markdown preview in brower plugin
+Plug 'iamcco/markdown-preview.nvim', { 'do': { -> mkdp#util#install() }, 'for': ['markdown', 'vim-plug']}
+
+" Search plugins
+Plug 'mileszs/ack.vim' " Use Ack search tool
+" Rg, Ag and other (BCommits, Files, GFiles ...)
 Plug 'junegunn/fzf', { 'do': { -> fzf#install() } }
 Plug 'junegunn/fzf.vim'
-Plug 'tpope/vim-fugitive'
-Plug 'junegunn/gv.vim'
 Plug 'Yggdroot/LeaderF', { 'do': ':LeaderfInstallCExtension' }
-Plug 'mileszs/ack.vim'
-Plug 'navarasu/onedark.nvim'
-Plug 'dense-analysis/ale'	" Linter
+Plug 'nvim-pack/nvim-spectre' " Search and replace
+
+" Git plugins
+Plug 'junegunn/gv.vim' " A git commit browser (too simple)
+" a Vim/Neovim plugin to reveal the hidden message from Git under the cursor quickly
+" To open message use '<Leader>gm' two times
+Plug 'rhysd/git-messenger.vim'
+Plug 'tpope/vim-fugitive'
 Plug 'sindrets/diffview.nvim'
-Plug 'vifm/vifm.vim'
-"Plug 'f-person/git-blame.nvim'
-Plug 'rhysd/git-messenger.vim'
+
+Plug 'MunifTanjim/nui.nvim' " UI Component Library (Popups and etc.)
+" (Provides Nerd Font 1 icons (glyphs) for use by Neovim plugins. A lua fork of vim-devicons)
 Plug 'nvim-tree/nvim-web-devicons'
-Plug 'rhysd/git-messenger.vim'
+Plug 'folke/lsp-trouble.nvim'
+Plug 'nvim-treesitter/nvim-treesitter' " Syntax highlight
 Plug 'nvim-lua/plenary.nvim'
-Plug 'MunifTanjim/nui.nvim'
-Plug 'nvim-neo-tree/neo-tree.nvim'
-Plug 'lukas-reineke/indent-blankline.nvim' " Show identation guides
-Plug 'numToStr/Comment.nvim'
 Plug 'mfussenegger/nvim-dap'
-Plug 'iamcco/markdown-preview.nvim', { 'do': { -> mkdp#util#install() }, 'for': ['markdown', 'vim-plug']}
-Plug 'nvim-pack/nvim-spectre'
 
 " A completion engine plugin
 Plug 'neovim/nvim-lspconfig'
@@ -118,7 +110,9 @@ Plug 'hrsh7th/cmp-nvim-lsp'
 Plug 'hrsh7th/cmp-buffer'
 Plug 'hrsh7th/cmp-path'
 Plug 'hrsh7th/cmp-cmdline'
-Plug 'hrsh7th/nvim-cmp'
+Plug 'hrsh7th/nvim-cmp' " Autocompletion
+Plug 'hrsh7th/cmp-nvim-lsp-signature-help'
+Plug 'hrsh7th/cmp-nvim-lua'
 
 " For vsnip users.
 Plug 'hrsh7th/cmp-vsnip'
@@ -126,11 +120,148 @@ Plug 'hrsh7th/vim-vsnip'
 
 " Rust
 Plug 'rust-lang/rust.vim'
+
+" Mason is a plugin to install and manage LSP servers, debuggers and linters
+Plug 'williamboman/mason.nvim'
+Plug 'williamboman/mason-lspconfig.nvim'
+
+Plug 'simrat39/rust-tools.nvim'
 call plug#end()
+
+lua <<EOF
+-- disable netrw at the very start of your init.lua
+vim.g.loaded_netrw = 1
+vim.g.loaded_netrwPlugin = 1
+
+-- optionally enable 24-bit colour
+vim.opt.termguicolors = true
+
+-- empty setup using defaults
+require("nvim-tree").setup()
+
+-- OR setup with some options
+require("nvim-tree").setup({
+  sort = {
+    sorter = "case_sensitive",
+  },
+  view = {
+    width = 30,
+  },
+  renderer = {
+    group_empty = true,
+  },
+  filters = {
+    dotfiles = true,
+  },
+})
+EOF
 
 "lua require('gitblame').setup {
 "    \ enabled = false,
 "\}
+lua << EOF
+  require("trouble").setup {
+    -- your configuration comes here
+    opts = { use_diagnostic_signs = true },
+    -- or leave it empty to use the default settings
+    -- refer to the configuration section below
+  }
+vim.keymap.set("n", "<leader>xx", function() require("trouble").open() end)
+vim.keymap.set("n", "<leader>xw", function() require("trouble").open("workspace_diagnostics") end)
+vim.keymap.set("n", "<leader>xd", function() require("trouble").open("document_diagnostics") end)
+vim.keymap.set("n", "<leader>xq", function() require("trouble").open("quickfix") end)
+vim.keymap.set("n", "<leader>xl", function() require("trouble").open("loclist") end)
+vim.keymap.set("n", "gR", function() require("trouble").open("lsp_references") end)
+
+local actions = require("telescope.actions")
+local open_with_trouble = require("trouble.sources.telescope").open
+
+-- Use this to add more results without clearing the trouble list
+local add_to_trouble = require("trouble.sources.telescope").add
+
+local telescope = require("telescope")
+
+telescope.setup({
+  defaults = {
+    mappings = {
+      i = { ["<c-t>"] = open_with_trouble },
+      n = { ["<c-t>"] = open_with_trouble },
+    },
+  },
+})
+-- Automatically Open Trouble Quickfix
+vim.api.nvim_create_autocmd("QuickFixCmdPost", {
+  callback = function()
+    vim.cmd([[Trouble qflist open]])
+  end,
+})
+EOF
+
+lua <<EOF
+-- Mason Setup
+require("mason").setup({
+    ui = {
+        icons = {
+            package_installed = "",
+            package_pending = "",
+            package_uninstalled = "",
+        },
+    }
+})
+require("mason-lspconfig").setup()
+
+local rt = require("rust-tools")
+
+rt.setup({
+  server = {
+    on_attach = function(_, bufnr)
+      -- Hover actions
+      vim.keymap.set("n", "<C-space>", rt.hover_actions.hover_actions, { buffer = bufnr })
+      -- Code action groups
+      vim.keymap.set("n", "<Leader>a", rt.code_action_group.code_action_group, { buffer = bufnr })
+    end,
+  },
+})
+
+-- LSP Diagnostics Options Setup
+local sign = function(opts)
+  vim.fn.sign_define(opts.name, {
+    texthl = opts.name,
+    text = opts.text,
+    numhl = ''
+  })
+end
+
+sign({name = 'DiagnosticSignError', text = ' '})
+--sign({name = 'DiagnosticSignWarn', text = ''})
+sign({name = 'DiagnosticSignWarn', text = ' '})
+sign({name = 'DiagnosticSignHint', text = '💡'})
+sign({name = 'DiagnosticSignInfo', text = ' '})
+
+vim.diagnostic.config({
+    virtual_text = false,
+    signs = true,
+    update_in_insert = true,
+    underline = true,
+    severity_sort = false,
+    float = {
+        border = 'rounded',
+        source = 'always',
+        header = '',
+        prefix = '',
+    },
+})
+
+vim.cmd([[
+set signcolumn=yes
+autocmd CursorHold * lua vim.diagnostic.open_float(nil, { focusable = false })
+]])
+
+EOF
+
+lua <<EOF
+
+EOF
 
 lua <<EOF
 -- local lsp = require('lspconfig')
@@ -201,7 +332,7 @@ lua <<EOF
       { name = 'buffer' },
     })
  })
- require("cmp_git").setup() ]]-- 
+ require("cmp_git").setup() ]]--
 
   -- Use buffer source for `/` and `?` (if you enabled `native_menu`, this won't work anymore).
   cmp.setup.cmdline({ '/', '?' }, {
@@ -301,12 +432,6 @@ EOF
 let g:python3_host_prog = expand('/usr/bin/python3')
 
 map <F3> :Neotree toggle<CR>
-" map <F3> :NERDTreeToggle<CR>
-" nnoremap <leader>n :NERDTreeFocus<CR>
-" nnoremap <C-n> :NERDTree<CR>
-" nnoremap <C-t> :NERDTreeToggle<CR>
-" nnoremap <C-f> :NERDTreeFind<CR>
-" map <F4> :TagbarToggle<CR>
 
 map <Tab> :bn<CR>
 map <S-Tab> :bp<CR>
@@ -360,28 +485,6 @@ nnoremap <leader>fs <cmd>Telescope grep_string<cr>
 nnoremap <leader>mp <cmd>MarkdownPreview<cr>
 nnoremap <leader>ms <cmd>MarkdownPreviewStop<cr>
 
-" Example config in Vim-Script
-" let g:solarized_italic_comments = v:true
-" let g:solarized_italic_keywords = v:false
-" let g:solarized_italic_functions = v:false
-" let g:solarized_italic_variables = v:false
-" let g:solarized_contrast = v:true
-" let g:solarized_borders = v:false
-" let g:solarized_disable_background = v:false
-" let g:solarized_extra_hi_groups = 1
-
-
-
-" colorscheme solarized8
-" colorscheme terafox
-"colorscheme carbonfox
-"colorscheme dawnfox
-"colorscheme dayfox
-"colorscheme duskfox
-"colorscheme nightfox
-"colorscheme nordfox
-
-" colorscheme terafox
 let g:onedark_config = {
     \ 'style': 'deep',
 \}
@@ -390,9 +493,6 @@ colorscheme onedark
     "\ 'style': 'deep',
 
 autocmd VimEnter * TSEnable highlight
-
-let g:nerdtree_sync_cursorline = 1
-let g:NERDTreeHighlightCursorline = 1
 
 
 "" Build a quickfix list when multiple files are selected
@@ -412,13 +512,14 @@ let g:fzf_layout = { 'window': { 'width': 1.0, 'height': 1.0, 'relative': v:true
 
 
 lua << EOF
+
 --  Highlight trailing whitespaces
 vim.api.nvim_set_hl(0, "ExtraWhitespace", { ctermbg = "darkred", bg = "darkred" })
 
 -- Autocommand to highlight trailing whitespace in all buffers
 vim.api.nvim_create_autocmd("BufWinEnter", {
 	pattern = {
-		'*.py', '*.c', '*.h', 'init.vim', '.vimrc'
+		'*.py', '*.c', '*.h', '*.rs', 'init.vim', '.vimrc'
 	},
 	callback = function()
 		vim.fn.matchadd("ExtraWhitespace", [[\s\+$]])
