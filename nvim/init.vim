@@ -87,6 +87,7 @@ Plug 'junegunn/fzf', { 'do': { -> fzf#install() } }
 Plug 'junegunn/fzf.vim'
 Plug 'Yggdroot/LeaderF', { 'do': ':LeaderfInstallCExtension' }
 Plug 'nvim-pack/nvim-spectre' " Search and replace
+Plug 'junegunn/vim-easy-align' " Align
 
 " Git plugins
 Plug 'junegunn/gv.vim' " A git commit browser (too simple)
@@ -127,6 +128,12 @@ Plug 'williamboman/mason-lspconfig.nvim'
 
 Plug 'simrat39/rust-tools.nvim'
 call plug#end()
+
+" Start interactive EasyAlign in visual mode (e.g. vipga)
+xmap ga <Plug>(EasyAlign)
+
+" Start interactive EasyAlign for a motion/text object (e.g. gaip)
+nmap ga <Plug>(EasyAlign)
 
 lua <<EOF
 -- disable netrw at the very start of your init.lua
