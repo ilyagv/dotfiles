@@ -68,7 +68,8 @@ inoremap <leader>w <Esc>:update<cr>gi
 call plug#begin()
 Plug 'nvim-lualine/lualine.nvim' " Statusline
 Plug 'akinsho/toggleterm.nvim', {'tag' : '*'} " Terminal
-Plug 'https://github.com/nvim-telescope/telescope.nvim' " Telescope fuzzing search
+Plug 'nvim-telescope/telescope.nvim' " Telescope fuzzing search
+Plug 'nvim-telescope/telescope-live-grep-args.nvim'
 Plug 'navarasu/onedark.nvim' " Colorscheme
 Plug 'catppuccin/nvim', { 'as': 'catppuccin' } " Colorscheme
 Plug 'nvim-neo-tree/neo-tree.nvim' "File explorer
@@ -76,7 +77,8 @@ Plug 'https://github.com/nvim-tree/nvim-tree.lua' " Next file explorer (let's le
 Plug 'vifm/vifm.vim' " Vifm file manager
 Plug 'dense-analysis/ale' " Linter
 Plug 'numToStr/Comment.nvim' " commenting plugin
-Plug 'lukas-reineke/indent-blankline.nvim' " Show identation guides
+Plug 'kylechui/nvim-surround'
+"Plug 'lukas-reineke/indent-blankline.nvim' " Show identation guides
 " Markdown preview in brower plugin
 Plug 'iamcco/markdown-preview.nvim', { 'do': { -> mkdp#util#install() }, 'for': ['markdown', 'vim-plug']}
 
@@ -127,6 +129,8 @@ Plug 'williamboman/mason.nvim'
 Plug 'williamboman/mason-lspconfig.nvim'
 
 Plug 'simrat39/rust-tools.nvim'
+Plug 'folke/lazydev.nvim'
+Plug 'shellRaining/hlchunk.nvim'
 call plug#end()
 
 " Start interactive EasyAlign in visual mode (e.g. vipga)
@@ -163,6 +167,12 @@ require("nvim-tree").setup({
 })
 EOF
 
+lua <<EOF
+require("nvim-surround").setup({
+            -- Configuration here, or leave empty to use defaults
+        })
+EOF
+
 "lua require('gitblame').setup {
 "    \ enabled = false,
 "\}
@@ -196,6 +206,7 @@ telescope.setup({
     },
   },
 })
+telescope.load_extension("live_grep_args")
 -- Automatically Open Trouble Quickfix
 vim.api.nvim_create_autocmd("QuickFixCmdPost", {
   callback = function()
@@ -402,33 +413,59 @@ require('toggleterm').setup({
 EOF
 
 lua << EOF
-local highlight = {
-    "RainbowRed",
-    "RainbowYellow",
-    "RainbowBlue",
-    "RainbowOrange",
-    "RainbowGreen",
-    "RainbowViolet",
-    "RainbowCyan",
-}
-local hooks = require "ibl.hooks"
--- create the highlight groups in the highlight setup hook, so they are reset
--- every time the colorscheme changes
-hooks.register(hooks.type.HIGHLIGHT_SETUP, function()
-    vim.api.nvim_set_hl(0, "RainbowRed", { fg = "#E06C75" })
-    vim.api.nvim_set_hl(0, "RainbowYellow", { fg = "#E5C07B" })
-    vim.api.nvim_set_hl(0, "RainbowBlue", { fg = "#61AFEF" })
-    vim.api.nvim_set_hl(0, "RainbowOrange", { fg = "#D19A66" })
-    vim.api.nvim_set_hl(0, "RainbowGreen", { fg = "#98C379" })
-    vim.api.nvim_set_hl(0, "RainbowViolet", { fg = "#C678DD" })
-    vim.api.nvim_set_hl(0, "RainbowCyan", { fg = "#56B6C2" })
-end)
+require('hlchunk').setup({
+    chunk = {
+        enable = true
+        -- ...
+    },
+    indent = {
+        enable = true,
+	-- style = {
+	-- 	"#FF0000",
+	-- 	"#FF7F00",
+	-- 	"#FFFF00",
+	-- 	"#00FF00",
+	-- 	"#00FFFF",
+	-- 	"#0000FF",
+	-- 	"#8B00FF",
+	-- },
+        -- ...
+    },
+    -- blank = {
+    --     enable = true
+    -- }, -- ...
+})
+EOF
 
-vim.g.rainbow_delimiters = { highlight = highlight }
-require("ibl").setup { scope = { highlight = highlight } }
+lua << EOF
 
-hooks.register(hooks.type.SCOPE_HIGHLIGHT, hooks.builtin.scope_highlight_from_extmark)
--- lua require("ibl").setup()
+-- local highlight = {
+--     "RainbowRed",
+--     "RainbowYellow",
+--     "RainbowBlue",
+--     "RainbowOrange",
+--     "RainbowGreen",
+--     "RainbowViolet",
+--     "RainbowCyan",
+-- }
+-- local hooks = require "ibl.hooks"
+-- -- create the highlight groups in the highlight setup hook, so they are reset
+-- -- every time the colorscheme changes
+-- hooks.register(hooks.type.HIGHLIGHT_SETUP, function()
+--     vim.api.nvim_set_hl(0, "RainbowRed", { fg = "#E06C75" })
+--     vim.api.nvim_set_hl(0, "RainbowYellow", { fg = "#E5C07B" })
+--     vim.api.nvim_set_hl(0, "RainbowBlue", { fg = "#61AFEF" })
+--     vim.api.nvim_set_hl(0, "RainbowOrange", { fg = "#D19A66" })
+--     vim.api.nvim_set_hl(0, "RainbowGreen", { fg = "#98C379" })
+--     vim.api.nvim_set_hl(0, "RainbowViolet", { fg = "#C678DD" })
+--     vim.api.nvim_set_hl(0, "RainbowCyan", { fg = "#56B6C2" })
+-- end)
+--
+-- vim.g.rainbow_delimiters = { highlight = highlight }
+-- require("ibl").setup { scope = { highlight = highlight } }
+--
+-- hooks.register(hooks.type.SCOPE_HIGHLIGHT, hooks.builtin.scope_highlight_from_extmark)
+
 EOF
 
 "lua require('toggleterm').setup({
@@ -485,9 +522,11 @@ EOF
 " Find files using Telescope command-line sugar.
 nnoremap <leader>ff <cmd>Telescope find_files<cr>
 nnoremap <leader>fg <cmd>Telescope live_grep<cr>
+" keymap.set("n", "<leader>fg", ":lua require('telescope').extensions.live_grep_args.live_grep_args()<CR>")
 nnoremap <leader>fb <cmd>Telescope buffers<cr>
 nnoremap <leader>fh <cmd>Telescope help_tags<cr>
 nnoremap <leader>fs <cmd>Telescope grep_string<cr>
+nnoremap <leader>fo <cmd>Telescope oldfiles<cr>
 
 nnoremap <leader>mp <cmd>MarkdownPreview<cr>
 nnoremap <leader>ms <cmd>MarkdownPreviewStop<cr>
