@@ -78,6 +78,8 @@ Plug 'vifm/vifm.vim' " Vifm file manager
 Plug 'dense-analysis/ale' " Linter
 Plug 'numToStr/Comment.nvim' " commenting plugin
 Plug 'kylechui/nvim-surround'
+Plug 'jbyuki/venn.nvim' " Draw ASCII diagrams in Neovim
+" Plug 'willothy/flatten.nvim' " Open files and command output from term
 "Plug 'lukas-reineke/indent-blankline.nvim' " Show identation guides
 " Markdown preview in brower plugin
 Plug 'iamcco/markdown-preview.nvim', { 'do': { -> mkdp#util#install() }, 'for': ['markdown', 'vim-plug']}
@@ -168,6 +170,82 @@ require("nvim-tree").setup({
 EOF
 
 lua <<EOF
+--
+-- require("flatten").setup({
+--   -- your config
+-- })
+-- local flatten = {
+--   "willothy/flatten.nvim",
+--   opts = function()
+--     ---@type Terminal?
+--     local saved_terminal
+--
+--     return {
+--       window = {
+--         open = "alternate",
+--       },
+--       hooks = {
+--         should_block = function(argv)
+--           -- Note that argv contains all the parts of the CLI command, including
+--           -- Neovim's path, commands, options and files.
+--           -- See: :help v:argv
+--
+--           -- In this case, we would block if we find the `-b` flag
+--           -- This allows you to use `nvim -b file1` instead of
+--           -- `nvim --cmd 'let g:flatten_wait=1' file1`
+--           return vim.tbl_contains(argv, "-b")
+--
+--           -- Alternatively, we can block if we find the diff-mode option
+--           -- return vim.tbl_contains(argv, "-d")
+--         end,
+--         pre_open = function()
+--           local term = require("toggleterm.terminal")
+--           local termid = term.get_focused_id()
+--           saved_terminal = term.get(termid)
+--         end,
+--         post_open = function(bufnr, winnr, ft, is_blocking)
+--           if is_blocking and saved_terminal then
+--             -- Hide the terminal while it's blocking
+--             saved_terminal:close()
+--           else
+--             -- If it's a normal file, just switch to its window
+--             vim.api.nvim_set_current_win(winnr)
+--
+--             -- If we're in a different wezterm pane/tab, switch to the current one
+--             -- Requires willothy/wezterm.nvim
+--             require("wezterm").switch_pane.id(
+--               tonumber(os.getenv("WEZTERM_PANE"))
+--             )
+--           end
+--
+--           -- If the file is a git commit, create one-shot autocmd to delete its buffer on write
+--           -- If you just want the toggleable terminal integration, ignore this bit
+--           if ft == "gitcommit" or ft == "gitrebase" then
+--             vim.api.nvim_create_autocmd("BufWritePost", {
+--               buffer = bufnr,
+--               once = true,
+--               callback = vim.schedule_wrap(function()
+--                 vim.api.nvim_buf_delete(bufnr, {})
+--               end),
+--             })
+--           end
+--         end,
+--         block_end = function()
+--           -- After blocking ends (for a git commit, etc), reopen the terminal
+--           vim.schedule(function()
+--             if saved_terminal then
+--               saved_terminal:open()
+--               saved_terminal = nil
+--             end
+--           end)
+--         end,
+--       },
+--     }
+--   end,
+-- }
+EOF
+
+lua <<EOF
 require("nvim-surround").setup({
             -- Configuration here, or leave empty to use defaults
         })
@@ -178,10 +256,20 @@ EOF
 "\}
 lua << EOF
   require("trouble").setup {
-    -- your configuration comes here
-    opts = { use_diagnostic_signs = true },
-    -- or leave it empty to use the default settings
-    -- refer to the configuration section below
+	-- your configuration comes here
+	opts = { use_diagnostic_signs = true },
+	-- or leave it empty to use the default settings
+	-- refer to the configuration section below
+	modes = {
+		quickfix = { -- Configure symbols mode
+			win = {
+				type = "split",     -- split window
+				relative = "win",   -- relative to current window
+				position = "left", -- left side
+				size = 0.3,         -- 30% of the window
+			},
+		},
+	},
   }
 vim.keymap.set("n", "<leader>xx", function() require("trouble").open() end)
 vim.keymap.set("n", "<leader>xw", function() require("trouble").open("workspace_diagnostics") end)
