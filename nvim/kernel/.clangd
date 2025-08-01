@@ -1,0 +1,5 @@
+CompileFlags:
+  Add: 
+    - "-include"
+    - "/home/ilya/ssd/share/kernel_upstream_build/build/include/generated/autoconf.h" # Path to your definitions file
+    - -I./include
