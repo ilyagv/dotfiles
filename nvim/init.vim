@@ -266,7 +266,23 @@ lua << EOF
 				type = "split",     -- split window
 				relative = "win",   -- relative to current window
 				position = "left", -- left side
-				size = 0.3,         -- 30% of the window
+				size = 0.4,         -- 30% of the window
+			},
+		},
+		telescope = { -- Configure telescope mode
+			win = {
+				type = "split",     -- split window
+				relative = "win",   -- relative to current window
+				position = "left", -- left side
+				size = 0.4,         -- 30% of the window
+			},
+		},
+		telescope_files = { -- Configure telescope mode
+			win = {
+				type = "split",     -- split window
+				relative = "win",   -- relative to current window
+				position = "left", -- left side
+				size = 0.4,         -- 30% of the window
 			},
 		},
 	},
@@ -473,6 +489,13 @@ require('lualine').setup({
 	options = {
 		theme = 'onedark',
 	},
+	sections = {
+		lualine_c = { {
+			'filename',
+			file_status = true,
+			path = 1 -- 0 = just filename, 1 = relative path, 2 = absolute path
+		} }
+	},
 })
 
 require('nvim-web-devicons').setup()
@@ -653,7 +676,7 @@ vim.api.nvim_set_hl(0, "ExtraWhitespace", { ctermbg = "darkred", bg = "darkred" 
 -- Autocommand to highlight trailing whitespace in all buffers
 vim.api.nvim_create_autocmd("BufWinEnter", {
 	pattern = {
-		'*.py', '*.c', '*.h', '*.rs', 'init.vim', '.vimrc'
+		'*.py', '*.c', '*.h', '*.rs', '*.sh', 'init.vim', '.vimrc'
 	},
 	callback = function()
 		vim.fn.matchadd("ExtraWhitespace", [[\s\+$]])
