@@ -123,6 +123,9 @@ Plug 'hrsh7th/cmp-nvim-lua'
 Plug 'hrsh7th/cmp-vsnip'
 Plug 'hrsh7th/vim-vsnip'
 
+" Show current function name in Statusline
+Plug 'SmiteshP/nvim-navic'
+
 " Rust
 Plug 'rust-lang/rust.vim'
 
@@ -134,6 +137,16 @@ Plug 'simrat39/rust-tools.nvim'
 Plug 'folke/lazydev.nvim'
 Plug 'shellRaining/hlchunk.nvim'
 call plug#end()
+
+lua <<EOF
+local navic = require("nvim-navic")
+
+require("lspconfig").clangd.setup {
+    on_attach = function(client, bufnr)
+        navic.attach(client, bufnr)
+    end
+}
+EOF
 
 " Start interactive EasyAlign in visual mode (e.g. vipga)
 xmap ga <Plug>(EasyAlign)
@@ -484,16 +497,33 @@ lua <<EOF
 EOF
 
 lua << EOF
-
+local navic = require("nvim-navic")
 require('lualine').setup({
 	options = {
 		theme = 'onedark',
 	},
 	sections = {
 		lualine_c = { {
+			-- function()
+			-- 	return navic.get_location()
+			-- end,
+			-- cond = function()
+			-- 	return package.loaded["nvim-navic"] and navic.is_available()
+			-- end,
 			'filename',
 			file_status = true,
 			path = 1 -- 0 = just filename, 1 = relative path, 2 = absolute path
+		} }
+	},
+	   -- OR in winbar
+	winbar = {
+		lualine_c = { {
+			function()
+				return navic.get_location()
+			end,
+			cond = function()
+				return navic.is_available()
+			end
 		} }
 	},
 })
@@ -632,7 +662,8 @@ EOF
 
 " Find files using Telescope command-line sugar.
 nnoremap <leader>ff <cmd>Telescope find_files<cr>
-nnoremap <leader>fg <cmd>Telescope live_grep<cr>
+" nnoremap <leader>fg <cmd>Telescope live_grep<cr>
+nnoremap <leader>fg <cmd>Telescope live_grep_args<cr>
 " keymap.set("n", "<leader>fg", ":lua require('telescope').extensions.live_grep_args.live_grep_args()<CR>")
 nnoremap <leader>fb <cmd>Telescope buffers<cr>
 nnoremap <leader>fh <cmd>Telescope help_tags<cr>
