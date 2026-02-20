@@ -34,7 +34,8 @@ set scrolloff=10
 " set showcmd
 " set wildmenu
 
-" set clipboard=unnamedplus
+" direct copy to system clipboard
+set clipboard=unnamedplus
 "set clipboard+=unnamed  " use the clipboards of vim and win
 " set paste               " Paste from a windows or from vim (this option spoils telescope navigations)
 " set go+=a               " Visual selection automatically copied to the clipboard
@@ -139,13 +140,27 @@ Plug 'shellRaining/hlchunk.nvim'
 call plug#end()
 
 lua <<EOF
+require("diffview").setup({
+	enhanced_diff_hl = true,
+})
+EOF
+
+lua <<EOF
 local navic = require("nvim-navic")
 
+local function on_attach(client, bufnr)
+	if client.server_capabilities.documentSymbolProvider then
+		navic.attach(client, bufnr)
+	end
+end
 require("lspconfig").clangd.setup {
-    on_attach = function(client, bufnr)
-        navic.attach(client, bufnr)
-    end
+    on_attach = on_attach
 }
+-- require("lspconfig").clangd.setup {
+--     on_attach = function(client, bufnr)
+--         navic.attach(client, bufnr)
+--     end
+-- }
 EOF
 
 " Start interactive EasyAlign in visual mode (e.g. vipga)
@@ -707,7 +722,7 @@ vim.api.nvim_set_hl(0, "ExtraWhitespace", { ctermbg = "darkred", bg = "darkred" 
 -- Autocommand to highlight trailing whitespace in all buffers
 vim.api.nvim_create_autocmd("BufWinEnter", {
 	pattern = {
-		'*.py', '*.c', '*.h', '*.rs', '*.sh', 'init.vim', '.vimrc'
+		'*.py', '*.c', '*.h', '*.rs', '*.sh', 'init.vim', '.vimrc', '*.patch'
 	},
 	callback = function()
 		vim.fn.matchadd("ExtraWhitespace", [[\s\+$]])
